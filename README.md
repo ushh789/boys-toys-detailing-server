@@ -17,13 +17,14 @@
 ### Залежності
 Переконайтеся, що у вас встановлені наступні пакети:
 - Flask
+- CORS
 - Requests
 
 ### Встановлення залежностей
 Виконайте в терміналі:
 
 ```bash
-pip install Flask requests
+pip install Flask requests flask-cors
 ```
 ---
 ### Налаштування
@@ -42,7 +43,7 @@ CHAT_ID = YOUR_CHAT_ID
 
 Запустіть сервер:
 ```bash
-python your_script_name.py
+python main.py
 ```
 Сервер слухає запити на порті 8081.
 Приклади використання
@@ -61,5 +62,6 @@ URL: http://localhost:8081/send
 ### Вимоги
 - Python 3.x
 - Flask
+- CORS
 - Requests
 

@@ -1,9 +1,11 @@
 import re
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 import configparser
 import requests
 
 app = Flask(__name__)
+CORS(app)
 config = configparser.ConfigParser()
 config.read("config.cfg")
 TELEGRAM_TOKEN = config["DEFAULT"]["TELEGRAM_TOKEN"]
