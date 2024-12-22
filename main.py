@@ -1,18 +1,18 @@
 import re
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-import configparser
+from dotenv import load_dotenv
+import os
 import requests
+
+load_dotenv()
+TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
+CHAT_ID = os.getenv("CHAT_ID")
+GOOGLE_SHEETS_KEY = os.getenv("GOOGLE_SHEETS_API_KEY")
+SPREADSHEET_ID = os.getenv("SPREADSHEET_ID")
 
 app = Flask(__name__)
 CORS(app)
-config = configparser.ConfigParser()
-config.read("config.cfg")
-TELEGRAM_TOKEN = config["DEFAULT"]["TELEGRAM_TOKEN"]
-CHAT_ID = config["DEFAULT"]["CHAT_ID"]
-GOOGLE_SHEETS_KEY = config["DEFAULT"]["GOOGLE_SHEETS_API_KEY"]
-SPREADSHEET_ID = config["DEFAULT"]["SPREADSHEET_ID"]
-
 
 def is_valid_ukrainian_phone(phone):
     regex = r'^(((\+?38)[-\s\(\.]?\d{3}[-\s\)\.]?)|([\.(]?0\d{2}[\.)]?))?[-\s\.]?\d{3}[-\s\.]?\d{2}[-\s\.]?\d{2}$'
@@ -57,6 +57,7 @@ def format_price_list(data):
         price_list.append(row)
     return price_list
 
+
 @app.route('/price_list', methods=['GET'])
 def retrieve_price_list():
     url = f'https://sheets.googleapis.com/v4/spreadsheets/{SPREADSHEET_ID}/values/Pricelist!A1:E80?key={GOOGLE_SHEETS_KEY}'
@@ -81,7 +82,7 @@ def retrieve_price_list():
         }), response.status_code
 
 
-@ app.route("/send", methods=["POST"])
+@app.route("/send", methods=["POST"])
 def handle_request():
     data = request.get_json()
     name = data.get("name")

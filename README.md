@@ -15,18 +15,19 @@
 - Flask
 - CORS
 - Requests
+- dotenv
 
 ### Встановлення залежностей
 Виконайте в терміналі:
 
 ```bash
-pip install Flask requests flask-cors
+pip install flask flask-cors python-dotenv requests
 ```
 ---
 ### Налаштування
 
 Крок 1: Створіть config.cfg
-Створіть файл config.cfg в кореневій папці проєкту зі наступним вмістом:
+Створіть файл .env в кореневій папці проєкту зі наступним вмістом:
 
 ```cfg
 [DEFAULT]
@@ -69,5 +70,5 @@ URL: http://localhost:8081/price_list
 - Python 3.x
 - Flask
 - CORS
-- Requests
+- dotenv
 
