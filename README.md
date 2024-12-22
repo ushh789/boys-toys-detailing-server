@@ -1,20 +1,16 @@
 # Telegram Notification Service
 
+---
+
 ## Опис
 
-Ця програма забезпечує веб-сервер на основі **Flask**, який обробляє HTTP POST-запити, перевіряє номер телефону на відповідність українському формату і відправляє дані до Telegram через Telegram Bot API.
-
-## Функціональність
-
-1. Перевіряє, чи номер телефону відповідає українському формату.
-2. Відправляє інформацію до Telegram за допомогою API.
-3. Висновок помилок при некоректному номері телефону чи помилці під час відправки до Telegram.
+Ця програма забезпечує веб-сервер на основі **Flask**, який обробляє HTTP-запити
 
 ---
 
-## Технічні деталі
+# How to run
 
-### Залежності
+## Залежності
 Переконайтеся, що у вас встановлені наступні пакети:
 - Flask
 - CORS
@@ -36,8 +32,9 @@ pip install Flask requests flask-cors
 [DEFAULT]
 TELEGRAM_TOKEN = YOUR_TELEGRAM_BOT_TOKEN
 CHAT_ID = YOUR_CHAT_ID
+GOOGLE_SHEETS_API_KEY = YOUR_GOOGLE_SHEETS_API_KEY
+SPREADSHEET_ID = YOUR_SPREADSHEET_ID
 ```
-Замініть YOUR_TELEGRAM_BOT_TOKEN на токен вашого Telegram-бота, а YOUR_CHAT_ID на ID чату, куди будуть відправлятися повідомлення.
 
 ### Запуск
 
@@ -46,9 +43,10 @@ CHAT_ID = YOUR_CHAT_ID
 python main.py
 ```
 Сервер слухає запити на порті 8081.
-Приклади використання
 
-POST-запит до /send
+# Приклади використання
+
+## POST-запит до /send
 URL: http://localhost:8081/send
 
 ### Тіло запиту:
@@ -59,7 +57,15 @@ URL: http://localhost:8081/send
 }
 ```
 
-### Вимоги
+## GET-запит до /price_list
+URL: http://localhost:8081/price_list
+
+### Тіло запиту:
+```json
+{}
+```
+
+# Вимоги
 - Python 3.x
 - Flask
 - CORS

@@ -10,6 +10,8 @@ config = configparser.ConfigParser()
 config.read("config.cfg")
 TELEGRAM_TOKEN = config["DEFAULT"]["TELEGRAM_TOKEN"]
 CHAT_ID = config["DEFAULT"]["CHAT_ID"]
+GOOGLE_SHEETS_KEY = config["DEFAULT"]["GOOGLE_SHEETS_API_KEY"]
+SPREADSHEET_ID = config["DEFAULT"]["SPREADSHEET_ID"]
 
 
 def is_valid_ukrainian_phone(phone):
@@ -30,6 +32,54 @@ def send_to_telegram(name, phone):
     except Exception as e:
         (print("Помилка при відправці до Telegram:", e))
     return False
+
+
+def format_price_list(data):
+    price_list = []
+    length = len(data)
+
+    for i in range(1, length):
+        if len(data[i]) < 5:
+            row = {
+                "category": data[i][0],
+                "price": data[i][1],
+                "typeOfService": data[i][2],
+                "title": data[i][3]
+            }
+        else:
+            row = {
+                "category": data[i][0],
+                "price": data[i][1],
+                "typeOfService": data[i][2],
+                "title": data[i][3],
+                "description": data[i][4]
+            }
+        price_list.append(row)
+    return price_list
+
+@app.route('/price_list', methods=['GET'])
+def retrieve_price_list():
+    url = f'https://sheets.googleapis.com/v4/spreadsheets/{SPREADSHEET_ID}/values/Pricelist!A1:E80?key={GOOGLE_SHEETS_KEY}'
+    response = requests.get(url)
+
+    if response.status_code == 200:
+        sheet_data = response.json()
+
+        if "values" in sheet_data:
+            data = sheet_data["values"]
+            return jsonify(format_price_list(data)), 200
+        else:
+            return jsonify({
+                "error": "Інформація про прайс-лист порожня"
+            }), 404
+
+    else:
+        return jsonify({
+            "error": "Не вдалось отримати інформацію про прайс-лист",
+            "status_code": response.status_code,
+            "details": response.text
+        }), response.status_code
+
 
 @ app.route("/send", methods=["POST"])
 def handle_request():
