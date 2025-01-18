@@ -12,7 +12,7 @@ GOOGLE_SHEETS_KEY = os.getenv("GOOGLE_SHEETS_API_KEY")
 SPREADSHEET_ID = os.getenv("SPREADSHEET_ID")
 
 app = Flask(__name__)
-CORS(app, origins=["http://localhost", "http://localhost:8081"])
+CORS(app, origins=["http://localhost:8082"])
 
 def is_valid_ukrainian_phone(phone):
     regex = r'^(((\+?38)[-\s\(\.]?\d{3}[-\s\)\.]?)|([\.(]?0\d{2}[\.)]?))?[-\s\.]?\d{3}[-\s\.]?\d{2}[-\s\.]?\d{2}$'
