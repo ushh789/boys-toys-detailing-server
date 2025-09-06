@@ -73,7 +73,7 @@ def example():
 @app.route('/price_list', methods=['GET'])
 def retrieve_price_list():
     url = f'https://sheets.googleapis.com/v4/spreadsheets/{SPREADSHEET_ID}/values/Pricelist!A1:E80?key={GOOGLE_SHEETS_KEY}'
-    response = requests.get(url)
+    response = requests.get(url, timeout=5)
 
     if response.status_code == 200:
         sheet_data = response.json()
@@ -108,7 +108,3 @@ def handle_request():
         return jsonify({"message": "Повідомлення відправлено"}), 200
     else:
         return jsonify({"error": "Помилка відправки до Telegram"}), 500
-
-
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8081)
