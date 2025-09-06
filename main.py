@@ -1,4 +1,6 @@
 import re
+import time
+
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from dotenv import load_dotenv
@@ -70,28 +72,41 @@ def example():
     return "API is working"
 
 
+price_list_cache = {
+    "data": None,
+    "timestamp": 0
+}
+CACHE_TTL = 10 * 60
+
+
 @app.route('/price_list', methods=['GET'])
 def retrieve_price_list():
+    current_time = time.time()
+
+    if price_list_cache["data"] and (current_time - price_list_cache["timestamp"] < CACHE_TTL):
+        return jsonify(price_list_cache["data"]), 200
+
     url = f'https://sheets.googleapis.com/v4/spreadsheets/{SPREADSHEET_ID}/values/Pricelist!A1:E80?key={GOOGLE_SHEETS_KEY}'
-    response = requests.get(url, timeout=5)
 
-    if response.status_code == 200:
-        sheet_data = response.json()
-
-        if "values" in sheet_data:
-            data = sheet_data["values"]
-            return jsonify(format_price_list(data)), 200
-        else:
-            return jsonify({
-                "error": "Інформація про прайс-лист порожня"
-            }), 404
-
-    else:
+    try:
+        response = requests.get(url, timeout=5)
+        response.raise_for_status()
+    except Exception as e:
         return jsonify({
-            "error": "Не вдалось отримати інформацію про прайс-лист",
-            "status_code": response.status_code,
-            "details": response.text
-        }), response.status_code
+            "error": "Не вдалося отримати прайс-лист",
+            "details": str(e)
+        }), 500
+
+    sheet_data = response.json()
+    if "values" not in sheet_data:
+        return jsonify({"error": "Прайс-лист порожній"}), 404
+
+    formatted_data = format_price_list(sheet_data["values"])
+
+    price_list_cache["data"] = formatted_data
+    price_list_cache["timestamp"] = current_time
+
+    return jsonify(formatted_data), 200
 
 
 @app.route("/send", methods=["POST"])
